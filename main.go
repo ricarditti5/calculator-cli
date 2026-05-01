@@ -71,6 +71,8 @@ func CalculatorMenu() {
 		estiloOpcao.Render("2.SUB[-]"),
 		estiloOpcao.Render("3.MULTIPLY[x]"),
 		estiloOpcao.Render("4.DIVISION[/]"),
+		estiloOpcao.Render("5.POWER[/]"),
+		estiloOpcao.Render("6.MODULE(REST)[/]"),
 		estiloOpcao.Render("q. [!] quit/exit"),
 	)
 
@@ -84,6 +86,10 @@ func CalculatorMenu() {
 func calculator(value float64) (
 	add func(...float64) float64,
 	sub func(...float64) float64,
+	multi func(...float64) float64,
+	div func(...float64) float64,
+	pow func(float64) float64,
+	mod func(float64) float64,
 ) {
 	res := value
 	add = func(x ...float64) float64 {
@@ -105,6 +111,34 @@ func calculator(value float64) (
 			res = math.Round(res)
 		}
 		return res
+	}
+
+	multi = func(x ...float64) float64 {
+		for _, num := range x {
+			res *= num
+		}
+		if math.Mod(res, 1.0) > 0 {
+			res = math.Round(res)
+		}
+		return res
+
+	}
+
+	div = func(x ...float64) float64 {
+		for _, num := range x {
+			res /= num
+		}
+		return res
+
+	}
+
+	pow = func(x float64) float64 {
+		return math.Pow(res, x)
+	}
+
+	mod = func(x float64) float64 {
+		return math.Mod(res, x)
+
 	}
 
 	//-----------------------
@@ -162,16 +196,25 @@ InfiniteLoopAPP:
 
 				firstValue := valuesOp[0]
 				otherValues := valuesOp[1:]
-				add, sub := calculator(firstValue)
+				add, sub, multi, div, pow, mod := calculator(firstValue)
 
 				switch opChoice {
 				case "1":
 					res := add(otherValues...)
 					fmt.Printf("The result of sum is %.2f", res)
-
 				case "2":
 					res := sub(otherValues...)
-					fmt.Printf("The result of sum is %.2f", res)
+					fmt.Printf("The result of sub is %.2f", res)
+				case "3":
+					res := multi(otherValues...)
+					fmt.Printf("The result of multiplication is %.2f", res)
+				case "4":
+					res := div(otherValues...)
+					fmt.Printf("The result of division is %.2f", res)
+				case "5":
+					fmt.Printf("Power: %.2f", pow(valuesOp[1]))
+				case "6":
+					fmt.Printf("Module(Rest): %.2f", mod(valuesOp[1]))
 
 				default:
 					fmt.Println("Invalid operation")
